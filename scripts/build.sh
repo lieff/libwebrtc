@@ -69,7 +69,7 @@ gn gen out/${TARGET_OS} --args='target_os="android" target_cpu="arm" is_debug=fa
 ninja -C out/${TARGET_OS}
 zip -j ../zips/webrtc_${TARGET_OS}_$timestamp out/${TARGET_OS}/obj/*.a out/${TARGET_OS}/obj/*.ninja
 else if [ "${TARGET_OS}" = "ios" ]; then
-gn gen out/${TARGET_OS} --args='target_os="ios" target_cpu="arm64" is_debug=false is_clang=false treat_warnings_as_errors=false rtc_include_tests=false use_custom_libcxx=false proprietary_codecs=true'
+gn gen out/${TARGET_OS} --args='target_os="ios" target_cpu="arm64" is_debug=false treat_warnings_as_errors=false rtc_include_tests=false proprietary_codecs=true ios_enable_code_signing=false'
 ninja -C out/${TARGET_OS}
 zip -j ../zips/webrtc_${TARGET_OS}_$timestamp out/${TARGET_OS}/obj/*.a out/${TARGET_OS}/obj/*.ninja
 else
