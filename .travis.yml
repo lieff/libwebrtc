@@ -21,7 +21,7 @@ matrix:
 script:
     - if [ "$TRAVIS_OS_NAME" == "osx" ]; then ./scripts/build.sh; fi
     - if [ "$TRAVIS_OS_NAME" == "linux" ]; then docker pull ubuntu:18.10; fi
-    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then docker run -i -e TRAVIS=$TRAVIS -t -v $PWD:/libwebrtc ubuntu:18.10 bash /libwebrtc/scripts/build.sh; fi
+    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then docker run -i -e TRAVIS=$TRAVIS -e TARGET_OS=${TARGET_OS} -t -v $PWD:/libwebrtc ubuntu:18.10 bash /libwebrtc/scripts/build.sh; fi
 
 deploy:
   - provider: releases

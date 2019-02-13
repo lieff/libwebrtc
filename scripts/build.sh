@@ -12,16 +12,19 @@ if [ "$PLATFORM" = "linux" ]; then
 if [ "$TRAVIS" = "true" ]; then
 export DEBIAN_FRONTEND="noninteractive"
 apt-get update -qq
-apt-get install -qq -y git git-core git-svn yasm build-essential curl wget rsync \
- binutils bison bzip2 cdbs dbus-x11 dpkg-dev elfutils devscripts fakeroot flex gperf \
+apt-get install -qq -y git yasm build-essential curl wget rsync \
+ binutils bison bzip2 dbus-x11 dpkg-dev elfutils devscripts fakeroot flex gperf \
  libappindicator3-dev libasound2-dev libatspi2.0-dev libbrlapi-dev libbz2-dev libcairo2-dev \
  libcap-dev libcups2-dev libcurl4-gnutls-dev libdrm-dev libelf-dev libffi-dev libgbm-dev \
  libglib2.0-dev libglu1-mesa-dev libgnome-keyring-dev libgtk-3-dev libkrb5-dev libnspr4-dev \
  libnss3-dev libpam0g-dev libpci-dev libpulse-dev libsctp-dev libspeechd-dev libsqlite3-dev \
- libssl-dev libudev-dev libwww-perl libxslt1-dev libxss-dev libxt-dev libxtst-dev locales \
- openbox p7zip patch perl pkg-config python python-cherrypy3 python-crypto python-dev \
- python-numpy python-opencv python-openssl python-psutil python-yaml rpm ruby subversion \
- uuid-dev wdiff x11-utils xcompmgr xz-utils zip libbluetooth-dev libxkbcommon-dev
+ libssl-dev libudev-dev libwww-perl libxslt1-dev libxss-dev libxt-dev libxtst-dev \
+ p7zip patch pkg-config python \
+ uuid-dev xz-utils zip libbluetooth-dev libxkbcommon-dev
+
+ if [ "${TARGET_OS}" = "android" ]; then
+  apt-get -y install openjdk-8-jre openjdk-8-jdk
+ fi
 fi
 fi
 
@@ -32,9 +35,9 @@ fi
 export PATH=$PWD/depot_tools:$PATH
 
 if [ ! -d "src" ]; then
-if [ "$TARGET_OS" = "android" ]; then
+if [ "${TARGET_OS}" = "android" ]; then
 fetch --nohooks webrtc_android
-else if [ "$TARGET_OS" = "ios" ]; then
+else if [ "${TARGET_OS}" = "ios" ]; then
 fetch --nohooks webrtc_ios
 else
 fetch --nohooks webrtc
@@ -46,7 +49,7 @@ python src/build/util/lastchange.py -o src/build/util/LASTCHANGE
 if [ "$PLATFORM" = "linux" ]; then
 /usr/bin/python src/build/linux/sysroot_scripts/install-sysroot.py --arch=amd64
 download_from_google_storage --no_resume --platform=linux* --no_auth --bucket chromium-gn -s src/buildtools/linux64/gn.sha1
-if [ "$TARGET_OS" = "android" ]; then
+if [ "${TARGET_OS}" = "android" ]; then
 /usr/bin/python src/tools/clang/scripts/update.py
 fi
 fi
@@ -61,14 +64,14 @@ timestamp=$(date '+%Y-%m-%d')
 mkdir -p zips
 cd src
 
-if [ "$TARGET_OS" = "android" ]; then
-gn gen out/$TARGET_OS --args='target_os="android" target_cpu="arm" is_debug=false treat_warnings_as_errors=false rtc_include_tests=false proprietary_codecs=true'
-ninja -C out/$TARGET_OS
-zip -j ../zips/webrtc_${TARGET_OS}_$timestamp out/$TARGET_OS/obj/*.a out/$TARGET_OS/obj/*.ninja
-else if [ "$TARGET_OS" = "ios" ]; then
-gn gen out/$TARGET_OS --args='target_os="ios" target_cpu="arm64" is_debug=false is_clang=false treat_warnings_as_errors=false rtc_include_tests=false use_custom_libcxx=false proprietary_codecs=true'
-ninja -C out/$TARGET_OS
-zip -j ../zips/webrtc_${TARGET_OS}_$timestamp out/$TARGET_OS/obj/*.a out/$TARGET_OS/obj/*.ninja
+if [ "${TARGET_OS}" = "android" ]; then
+gn gen out/${TARGET_OS} --args='target_os="android" target_cpu="arm" is_debug=false treat_warnings_as_errors=false rtc_include_tests=false proprietary_codecs=true'
+ninja -C out/${TARGET_OS}
+zip -j ../zips/webrtc_${TARGET_OS}_$timestamp out/${TARGET_OS}/obj/*.a out/${TARGET_OS}/obj/*.ninja
+else if [ "${TARGET_OS}" = "ios" ]; then
+gn gen out/${TARGET_OS} --args='target_os="ios" target_cpu="arm64" is_debug=false is_clang=false treat_warnings_as_errors=false rtc_include_tests=false use_custom_libcxx=false proprietary_codecs=true'
+ninja -C out/${TARGET_OS}
+zip -j ../zips/webrtc_${TARGET_OS}_$timestamp out/${TARGET_OS}/obj/*.a out/${TARGET_OS}/obj/*.ninja
 else
 
 #if [ "$PLATFORM" = "linux" ]; then
