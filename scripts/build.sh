@@ -13,14 +13,13 @@ if [ "$TRAVIS" = "true" ]; then
 export DEBIAN_FRONTEND="noninteractive"
 apt-get update -qq
 apt-get install -qq -y git yasm build-essential curl wget rsync \
- binutils bison bzip2 dbus-x11 dpkg-dev elfutils devscripts fakeroot flex gperf \
+ flex bison bzip2 zip p7zip fakeroot patch pkg-config python \
  libappindicator3-dev libasound2-dev libatspi2.0-dev libbrlapi-dev libbz2-dev libcairo2-dev \
  libcap-dev libcups2-dev libcurl4-gnutls-dev libdrm-dev libelf-dev libffi-dev libgbm-dev \
  libglib2.0-dev libglu1-mesa-dev libgnome-keyring-dev libgtk-3-dev libkrb5-dev libnspr4-dev \
  libnss3-dev libpam0g-dev libpci-dev libpulse-dev libsctp-dev libspeechd-dev libsqlite3-dev \
- libssl-dev libudev-dev libwww-perl libxslt1-dev libxss-dev libxt-dev libxtst-dev \
- p7zip patch pkg-config python \
- uuid-dev xz-utils zip libbluetooth-dev libxkbcommon-dev
+ libssl-dev libudev-dev libxslt1-dev libxss-dev libxt-dev libxtst-dev \
+ uuid-dev libbluetooth-dev libxkbcommon-dev
 
  if [ "${TARGET_OS}" = "android" ]; then
   apt-get -y install openjdk-8-jre openjdk-8-jdk
