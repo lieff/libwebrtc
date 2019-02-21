@@ -73,11 +73,12 @@ ninja -C out/${TARGET_OS}
 zip -j ../zips/webrtc_${TARGET_OS}_$timestamp out/${TARGET_OS}/obj/*.a out/${TARGET_OS}/obj/*.ninja
 else
 
-#if [ "$PLATFORM" = "linux" ]; then
+if [ "$PLATFORM" = "linux" ]; then
+git apply ../../patches/*.patch
 #gn gen out/Debug --args="is_debug=true is_clang=false treat_warnings_as_errors=false rtc_include_tests=false use_custom_libcxx=false proprietary_codecs=true"
 #ninja -C out/Debug
 #zip -j ../zips/webrtc_${PLATFORM}_debug_$timestamp out/Debug/obj/*.a out/Debug/obj/*.ninja
-#fi
+fi
 gn gen out/Release --args="is_debug=false is_clang=false treat_warnings_as_errors=false rtc_include_tests=false use_custom_libcxx=false proprietary_codecs=true"
 ninja -C out/Release
 zip -j ../zips/webrtc_${PLATFORM}_release_$timestamp out/Release/obj/*.a out/Release/obj/*.ninja

@@ -1,0 +1,45 @@
+diff --git a/modules/video_capture/linux/video_capture_linux.cc b/modules/video_capture/linux/video_capture_linux.cc
+index d890469..65f9a1a 100644
+--- a/modules/video_capture/linux/video_capture_linux.cc
++++ b/modules/video_capture/linux/video_capture_linux.cc
+@@ -22,6 +22,7 @@
+ #include <unistd.h>
+ #include <new>
+ #include <string>
++#include <poll.h>
+ 
+ #include "api/scoped_refptr.h"
+ #include "media/base/video_common.h"
+@@ -356,26 +357,20 @@ bool VideoCaptureModuleV4L2::CaptureThread(void* obj) {
+ }
+ bool VideoCaptureModuleV4L2::CaptureProcess() {
+   int retVal = 0;
+-  fd_set rSet;
+-  struct timeval timeout;
++  pollfd pf;
+ 
+   rtc::CritScope cs(&_captureCritSect);
+ 
+-  FD_ZERO(&rSet);
+-  FD_SET(_deviceFd, &rSet);
+-  timeout.tv_sec = 1;
+-  timeout.tv_usec = 0;
++  pf.fd = _deviceFd;
++  pf.events = POLLIN | POLLHUP | POLLERR;
++  retVal = poll(&pf, 1, 1000);
+ 
+-  retVal = select(_deviceFd + 1, &rSet, NULL, NULL, &timeout);
+   if (retVal < 0 && errno != EINTR)  // continue if interrupted
+   {
+-    // select failed
++    // poll failed
+     return false;
+   } else if (retVal == 0) {
+-    // select timed out
+-    return true;
+-  } else if (!FD_ISSET(_deviceFd, &rSet)) {
+-    // not event on camera handle
++    // poll timed out
+     return true;
+   }
+ 
